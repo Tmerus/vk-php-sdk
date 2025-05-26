@@ -23,11 +23,11 @@ class CurlHttpClient implements TransportClient
      */
     public function __construct(int $connection_timeout, array $proxyOpts = array())
     {
-        $this->initial_opts = array_merge(array(
+        $this->initial_opts = array(
                 CURLOPT_HEADER => true,
                 CURLOPT_CONNECTTIMEOUT => $connection_timeout,
                 CURLOPT_RETURNTRANSFER => true,
-            ), $proxyOpts);
+            ) + $proxyOpts;
     }
 
     /**
