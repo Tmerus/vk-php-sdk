@@ -1,9 +1,9 @@
 {
-    "name": "vkcom/vk-php-sdk",
-    "description": "VK PHP SDK",
+    "name": "tmerus/vk-php-sdk",
+    "description": "VK PHP SDK fork",
     "keywords": ["vk", "sdk"],
     "type": "library",
-    "homepage": "https://github.com/VKCOM/vk-php-sdk",
+    "homepage": "https://github.com/Tmerus/vk-php-sdk",
     "license": "MIT",
     "require": {
         "php": ">=7.1"
