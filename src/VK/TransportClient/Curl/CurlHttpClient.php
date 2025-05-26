@@ -21,7 +21,7 @@ class CurlHttpClient implements TransportClient
      * CurlHttpClient constructor.
      * @param int $connection_timeout
      */
-    public function __construct(int $connection_timeout, ?array $proxyOpts = null)
+    public function __construct(int $connection_timeout, ?array $proxyOpts = array())
     {
         $this->initial_opts = array(
                 CURLOPT_HEADER => true,
