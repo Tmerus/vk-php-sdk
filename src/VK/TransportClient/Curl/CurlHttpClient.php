@@ -6,7 +6,8 @@ use VK\TransportClient\TransportClient;
 use VK\TransportClient\TransportClientResponse;
 use VK\TransportClient\TransportRequestException;
 
-class CurlHttpClient implements TransportClient {
+class CurlHttpClient implements TransportClient
+{
 
     protected const HEADER_UPLOAD_CONTENT_TYPE = 'Content-Type: multipart/form-data';
     protected const QUESTION_MARK = '?';
@@ -20,12 +21,13 @@ class CurlHttpClient implements TransportClient {
      * CurlHttpClient constructor.
      * @param int $connection_timeout
      */
-    public function __construct(int $connection_timeout) {
+    public function __construct(int $connection_timeout, ?array $proxyOpts = null)
+    {
         $this->initial_opts = array(
-            CURLOPT_HEADER         => true,
-            CURLOPT_CONNECTTIMEOUT => $connection_timeout,
-            CURLOPT_RETURNTRANSFER => true,
-        );
+                CURLOPT_HEADER => true,
+                CURLOPT_CONNECTTIMEOUT => $connection_timeout,
+                CURLOPT_RETURNTRANSFER => true,
+            ) + $proxyOpts;
     }
 
     /**
@@ -37,9 +39,10 @@ class CurlHttpClient implements TransportClient {
      * @return TransportClientResponse
      * @throws TransportRequestException
      */
-    public function post(string $url, ?array $payload = null): TransportClientResponse {
+    public function post(string $url, ?array $payload = null): TransportClientResponse
+    {
         return $this->sendRequest($url, array(
-            CURLOPT_POST       => 1,
+            CURLOPT_POST => 1,
             CURLOPT_POSTFIELDS => $payload
         ));
     }
@@ -53,7 +56,8 @@ class CurlHttpClient implements TransportClient {
      * @return TransportClientResponse
      * @throws TransportRequestException
      */
-    public function get(string $url, ?array $payload = null): TransportClientResponse {
+    public function get(string $url, ?array $payload = null): TransportClientResponse
+    {
         return $this->sendRequest($url . static::QUESTION_MARK . http_build_query($payload), array());
     }
 
@@ -67,13 +71,14 @@ class CurlHttpClient implements TransportClient {
      * @return TransportClientResponse
      * @throws TransportRequestException
      */
-    public function upload(string $url, string $parameter_name, string $path): TransportClientResponse {
+    public function upload(string $url, string $parameter_name, string $path): TransportClientResponse
+    {
         $payload = array();
         $payload[$parameter_name] = (class_exists('CURLFile', false)) ?
             new \CURLFile($path) : '@' . $path;
 
         return $this->sendRequest($url, array(
-            CURLOPT_POST       => 1,
+            CURLOPT_POST => 1,
             CURLOPT_HTTPHEADER => array(
                 static::HEADER_UPLOAD_CONTENT_TYPE,
             ),
@@ -90,7 +95,8 @@ class CurlHttpClient implements TransportClient {
      * @return TransportClientResponse
      * @throws TransportRequestException
      */
-    public function sendRequest(string $url, array $opts) {
+    public function sendRequest(string $url, array $opts)
+    {
         $curl = curl_init($url);
 
         curl_setopt_array($curl, $this->initial_opts + $opts);
@@ -99,10 +105,10 @@ class CurlHttpClient implements TransportClient {
 
         $curl_error_code = curl_errno($curl);
         $curl_error = curl_error($curl);
-      
+
         $http_status = curl_getinfo($curl, CURLINFO_RESPONSE_CODE);
         curl_close($curl);
-        
+
         if ($curl_error || $curl_error_code) {
             $error_msg = "Failed curl request. Curl error {$curl_error_code}";
             if ($curl_error) {
@@ -117,15 +123,16 @@ class CurlHttpClient implements TransportClient {
         return $this->parseRawResponse($http_status, $response);
     }
 
-  /**
-   * Breaks the raw response down into its headers, body and http status code.
-   *
-   * @param int $http_status
-   * @param string $response
-   *
-   * @return TransportClientResponse
-   */
-    protected function parseRawResponse(int $http_status, string $response) {
+    /**
+     * Breaks the raw response down into its headers, body and http status code.
+     *
+     * @param int $http_status
+     * @param string $response
+     *
+     * @return TransportClientResponse
+     */
+    protected function parseRawResponse(int $http_status, string $response)
+    {
         list($raw_headers, $body) = $this->extractResponseHeadersAndBody($response);
         $headers = $this->getHeaders($raw_headers);
         return new TransportClientResponse($http_status, $headers, $body);
@@ -138,7 +145,8 @@ class CurlHttpClient implements TransportClient {
      *
      * @return array
      */
-    protected function extractResponseHeadersAndBody(string $response) {
+    protected function extractResponseHeadersAndBody(string $response)
+    {
         $parts = explode("\r\n\r\n", $response);
         $raw_body = array_pop($parts);
         $raw_headers = implode("\r\n\r\n", $parts);
@@ -153,7 +161,8 @@ class CurlHttpClient implements TransportClient {
      *
      * @return array
      */
-    protected function getHeaders(string $raw_headers) {
+    protected function getHeaders(string $raw_headers)
+    {
         // Normalize line breaks
         $raw_headers = str_replace("\r\n", "\n", $raw_headers);
 
@@ -185,7 +194,8 @@ class CurlHttpClient implements TransportClient {
      *
      * @return int
      */
-    protected function getHttpStatus(string $raw_response_header): int {
+    protected function getHttpStatus(string $raw_response_header): int
+    {
         preg_match('|HTTP/\d(?:\.\d)?\s+(\d+)\s+.*|', $raw_response_header, $match);
         return (int)$match[1];
     }

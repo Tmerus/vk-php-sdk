@@ -46,8 +46,8 @@ class VKApiRequest {
      * @param string|null $language
      * @param string $host
      */
-    public function __construct(string $api_version, ?string $language, string $host) {
-        $this->http_client = new CurlHttpClient(static::CONNECTION_TIMEOUT);
+    public function __construct(string $api_version, ?string $language, string $host, ?array $proxyOpts = null) {
+        $this->http_client = new CurlHttpClient(static::CONNECTION_TIMEOUT, $proxyOpts);
         $this->version = $api_version;
         $this->host = $host;
         $this->language = $language;
@@ -65,7 +65,7 @@ class VKApiRequest {
      * @throws VKClientException
      * @throws VKApiException
      */
-    public function post(string $method, string $access_token, array $params = array()) {
+    public function post(string $method, string $access_token, array $params = array(), ?array $proxyOpts = null) {
         $params = $this->formatParams($params);
         $params[static::PARAM_ACCESS_TOKEN] = $access_token;
 
@@ -80,7 +80,7 @@ class VKApiRequest {
         $url = $this->host . '/' . $method;
 
         try {
-            $response = $this->http_client->post($url, $params);
+            $response = $this->http_client->post($url, $params, $proxyOpts);
         } catch (TransportRequestException $e) {
             throw new VKClientException($e);
         }
