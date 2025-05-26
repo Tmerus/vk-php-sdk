@@ -57,7 +57,7 @@ class VKCallbackApiLongPollExecutor {
      * @param int $wait
      */
     public function __construct(VKApiClient $api_client, string $access_token, int $group_id, VKCallbackApiHandler $handler,
-                                int $wait = self::DEFAULT_WAIT, ?array $proxyOpts = null) {
+                                int $wait = self::DEFAULT_WAIT, array $proxyOpts = array()) {
         $this->api_client = $api_client;
         $this->http_client = new CurlHttpClient(static::CONNECTION_TIMEOUT, $proxyOpts);
         $this->access_token = $access_token;

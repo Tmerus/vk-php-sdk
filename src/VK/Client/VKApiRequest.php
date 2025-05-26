@@ -46,7 +46,7 @@ class VKApiRequest {
      * @param string|null $language
      * @param string $host
      */
-    public function __construct(string $api_version, ?string $language, string $host, ?array $proxyOpts = null) {
+    public function __construct(string $api_version, ?string $language, string $host, array $proxyOpts = array()) {
         $this->http_client = new CurlHttpClient(static::CONNECTION_TIMEOUT, $proxyOpts);
         $this->version = $api_version;
         $this->host = $host;

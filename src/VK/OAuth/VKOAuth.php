@@ -53,7 +53,7 @@ class VKOAuth {
      *
      * @param string $version
      */
-    public function __construct(string $version = self::VERSION, ?array $proxyOpts = null) {
+    public function __construct(string $version = self::VERSION, array $proxyOpts = array()) {
         $this->http_client = new CurlHttpClient(static::CONNECTION_TIMEOUT, $proxyOpts);
         $this->version = $version;
         $this->host = static::HOST;
