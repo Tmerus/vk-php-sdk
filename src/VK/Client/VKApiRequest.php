@@ -65,7 +65,7 @@ class VKApiRequest {
      * @throws VKClientException
      * @throws VKApiException
      */
-    public function post(string $method, string $access_token, array $params = array(), ?array $proxyOpts = null) {
+    public function post(string $method, string $access_token, array $params = array()) {
         $params = $this->formatParams($params);
         $params[static::PARAM_ACCESS_TOKEN] = $access_token;
 
@@ -80,7 +80,7 @@ class VKApiRequest {
         $url = $this->host . '/' . $method;
 
         try {
-            $response = $this->http_client->post($url, $params, $proxyOpts);
+            $response = $this->http_client->post($url, $params);
         } catch (TransportRequestException $e) {
             throw new VKClientException($e);
         }
